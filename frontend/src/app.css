@@ -75,7 +75,7 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-gray-100;
+    @apply bg-background text-gray-100 flex flex-col items-center justify-center h-screen;
   }
 
   body {
@@ -83,8 +83,6 @@
     padding: 0;
     min-width: 0;
     min-height: 100vh;
-    display: grid;
-    place-items: center;
   }
   html {
     box-sizing: border-box;
