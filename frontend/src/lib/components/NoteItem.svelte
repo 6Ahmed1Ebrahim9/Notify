@@ -12,9 +12,11 @@
     <span>
       {note.createdAt.toLocaleDateString()}
     </span>
-    <span> - </span>
-    <span>
-      {note.content}
-    </span>
+    {#if note.content}
+      <span> - </span>
+      <span>
+        {note.content}
+      </span>
+    {/if}
   </div>
 </main>

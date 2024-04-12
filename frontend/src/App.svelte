@@ -1,4 +1,5 @@
 <script lang="ts">
+  import type { Note } from "$lib/types";
   import Button from "$lib/components/ui/button/button.svelte";
   import ScrollArea from "$lib/components/ui/scroll-area/scroll-area.svelte";
   import NoteItem from "./lib/components/NoteItem.svelte";
@@ -8,7 +9,7 @@
 
   let dialogOpen = false;
 
-  let notes = [
+  let notes: Note[] = [
     {
       id: "1",
       title: "Hello, world!",
