@@ -56,3 +56,12 @@ def getNote(request, pk):
         return Response(serializer.data)
     except Note.DoesNotExist:
         return Response({'detail': 'Note does not exist'}, status=404)
+    
+@api_view(['PUT'])   
+def updateNote(request, pk):
+    note = Note.objects.get(id=pk)
+    serializer = NoteSerializer(instance=note, data=request.data)
+    
+    if serializer.is_valid():
+        serializer.save()
+    return Response(serializer.data)
