@@ -1,5 +1,6 @@
 <script lang="ts">
-  import NoteItem from "./components/NoteItem.svelte";
+  import Button from "$lib/components/ui/button/button.svelte";
+  import NoteItem from "./lib/components/NoteItem.svelte";
 
   let notes = [
     {
@@ -46,7 +47,7 @@
         </svg>
         <span class="text-4xl"> Notes </span>
       </h1>
-      <span class="text-3xl">
+      <span class="text-3xl text-orange-700">
         {notes.length}
       </span>
     </div>
@@ -55,5 +56,6 @@
         <NoteItem {note} />
       {/each}
     </div>
+    <Button class=" p-8 rounded-xl right-28 bg-orange-700 bottom-0">+</Button>
   </div>
 </main>

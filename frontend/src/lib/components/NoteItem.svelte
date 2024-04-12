@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Note } from "../lib/types";
+  import type { Note } from "../types";
 
   export let note: Note;
 </script>
