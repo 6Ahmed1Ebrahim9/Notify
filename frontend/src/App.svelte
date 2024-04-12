@@ -1,7 +1,8 @@
 <script lang="ts">
   import Button from "$lib/components/ui/button/button.svelte";
+  import ScrollArea from "$lib/components/ui/scroll-area/scroll-area.svelte";
   import NoteItem from "./lib/components/NoteItem.svelte";
-
+  import * as Dialog from "$lib/components/ui/dialog";
   let notes = [
     {
       id: "1",
@@ -21,12 +22,30 @@
       content: "Hello, Tailwind CSS!",
       createdAt: new Date(),
     },
+    {
+      id: "4",
+      title: "Hello, world!",
+      content: "Hello, world!",
+      createdAt: new Date(),
+    },
+    {
+      id: "5",
+      title: "Hello, world!",
+      content: "Hello, Svelte!",
+      createdAt: new Date(),
+    },
+    {
+      id: "6",
+      title: "Hello, world!",
+      content: "Hello, Tailwind CSS!",
+      createdAt: new Date(),
+    },
   ];
 </script>
 
-<main class="*:mx-auto py-40">
+<main class="*:mx-auto w-screen">
   <div
-    class="container bg-stone-100/5 p-14 rounded-xl shadow-xl flex flex-col gap-8"
+    class="container bg-stone-100/5 p-14 rounded-xl shadow-xl flex flex-col gap-8 relative"
   >
     <div class="flex items-end justify-between">
       <h1 class="flex items-center justify-center gap-2">
@@ -51,11 +70,40 @@
         {notes.length}
       </span>
     </div>
-    <div class="flex flex-col gap-4">
+    <ScrollArea class="h-[60vh] shadow-md flex flex-col gap-2">
       {#each notes as note (note.id)}
         <NoteItem {note} />
       {/each}
-    </div>
-    <Button class=" p-8 rounded-xl right-28 bg-orange-700 bottom-0">+</Button>
+    </ScrollArea>
+    <Dialog.Root>
+      <Dialog.Trigger class="absolute right-5 bottom-5">
+        <Button
+          class=" p-8 rounded-xl bg-orange-700 text-4xl shadow-sm shadow-zinc-800 border-2 border-zinc-800 self-center"
+        >
+          +
+        </Button></Dialog.Trigger
+      >
+      <Dialog.Content class="border-orange-700">
+        <Dialog.Header>
+          <Dialog.Title>Add New Note</Dialog.Title>
+        </Dialog.Header>
+
+        <form class="flex flex-col gap-4">
+          <label>
+            <span class="text-2xl">Title</span>
+            <input type="text" class="p-4 rounded-xl bg-stone-100/5" />
+          </label>
+          <label>
+            <span class="text-2xl">Content</span>
+            <textarea class="p-4 rounded-xl bg-stone-100/5"></textarea>
+          </label>
+          <Button
+            class="p-4 rounded-xl bg-orange-700 text-2xl shadow-sm shadow-zinc-800 border-2 border-zinc-800 self-center"
+          >
+            Add Note
+          </Button>
+        </form>
+      </Dialog.Content>
+    </Dialog.Root>
   </div>
 </main>
