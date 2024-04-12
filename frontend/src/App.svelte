@@ -3,6 +3,11 @@
   import ScrollArea from "$lib/components/ui/scroll-area/scroll-area.svelte";
   import NoteItem from "./lib/components/NoteItem.svelte";
   import * as Dialog from "$lib/components/ui/dialog";
+  import { Input } from "$lib/components/ui/input";
+  import { Textarea } from "$lib/components/ui/textarea";
+
+  let dialogOpen = false;
+
   let notes = [
     {
       id: "1",
@@ -41,6 +46,29 @@
       createdAt: new Date(),
     },
   ];
+
+  let title = "";
+  let content = "";
+
+  function addNote() {
+    console.log(title, content);
+    notes = [
+      ...notes,
+      {
+        id: String(notes.length + 1),
+        title: title,
+        content: content,
+        createdAt: new Date(),
+      },
+    ];
+    clearBindings();
+    dialogOpen = false;
+  }
+
+  function clearBindings() {
+    title = "";
+    content = "";
+  }
 </script>
 
 <main class="*:mx-auto w-screen">
@@ -75,7 +103,7 @@
         <NoteItem {note} />
       {/each}
     </ScrollArea>
-    <Dialog.Root>
+    <Dialog.Root bind:open={dialogOpen}>
       <Dialog.Trigger class="absolute right-5 bottom-5">
         <Button
           class=" p-8 rounded-xl bg-orange-700 text-4xl shadow-sm shadow-zinc-800 border-2 border-zinc-800 self-center"
@@ -83,22 +111,35 @@
           +
         </Button></Dialog.Trigger
       >
-      <Dialog.Content class="border-orange-700">
+      <Dialog.Content class="border-orange-700" on:close={clearBindings}>
         <Dialog.Header>
-          <Dialog.Title>Add New Note</Dialog.Title>
+          <Dialog.Title class="text-2xl">Add New Note</Dialog.Title>
         </Dialog.Header>
 
-        <form class="flex flex-col gap-4">
-          <label>
-            <span class="text-2xl">Title</span>
-            <input type="text" class="p-4 rounded-xl bg-stone-100/5" />
-          </label>
-          <label>
-            <span class="text-2xl">Content</span>
-            <textarea class="p-4 rounded-xl bg-stone-100/5"></textarea>
-          </label>
+        <form class="flex flex-col gap-4" on:submit|preventDefault={addNote}>
+          <fieldset class="flex flex-col">
+            <label for="noteTitle" class="sr-only"> Title </label>
+            <Input
+              type="text"
+              name="noteTitle"
+              class="p-4 rounded-xl bg-stone-100/5"
+              placeholder="Title"
+              bind:value={title}
+            />
+          </fieldset>
+          <fieldset class="flex flex-col">
+            <label for="noteContent" class="sr-only"> Content </label>
+            <Textarea
+              name="noteContent"
+              class="p-4 rounded-xl bg-stone-100/5"
+              placeholder="Content"
+              bind:value={content}
+            />
+          </fieldset>
+
           <Button
-            class="p-4 rounded-xl bg-orange-700 text-2xl shadow-sm shadow-zinc-800 border-2 border-zinc-800 self-center"
+            class="p-4 rounded-xl bg-orange-700 text-lg  shadow-sm shadow-zinc-800 border-2 border-zinc-800"
+            type="submit"
           >
             Add Note
           </Button>
