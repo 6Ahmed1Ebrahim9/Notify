@@ -76,7 +76,7 @@
   <div
     class="container bg-stone-100/5 p-14 rounded-xl shadow-xl flex flex-col gap-8 relative"
   >
-    <div class="flex items-end justify-between">
+    <div class="flex items-end justify-between select-none">
       <h1 class="flex items-center justify-center gap-2">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -105,9 +105,9 @@
       {/each}
     </ScrollArea>
     <Dialog.Root bind:open={dialogOpen}>
-      <Dialog.Trigger class="absolute right-5 bottom-5">
+      <Dialog.Trigger class="absolute right-0 bottom-0">
         <Button
-          class=" p-8 rounded-xl bg-orange-700 text-4xl shadow-sm shadow-zinc-800 border-2 border-zinc-800 self-center"
+          class="p-2 w-20 h-20 rounded-lg bg-orange-700 text-5xl shadow-sm shadow-zinc-800 border-2 border-zinc-800 self-center"
         >
           +
         </Button></Dialog.Trigger
