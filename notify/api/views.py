@@ -48,14 +48,6 @@ def getNotes(request):
     serializer = NoteSerializer(notes, many=True)
     return Response(serializer.data)
 
-@api_view(['GET'])
-def getNote(request, pk):
-    try:
-        note = Note.objects.get(id=pk)
-        serializer = NoteSerializer(note, many=False)
-        return Response(serializer.data)
-    except Note.DoesNotExist:
-        return Response({'detail': 'Note does not exist'}, status=404)
     
 @api_view(['PUT'])   
 def updateNote(request, pk):
