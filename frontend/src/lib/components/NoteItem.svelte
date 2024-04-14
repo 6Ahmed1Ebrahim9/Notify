@@ -5,15 +5,12 @@
   import { Input } from "./ui/input";
   import { Textarea } from "./ui/textarea";
   export let note: Note;
+  export let deleteNote: () => void;
 
   let title = note.title;
   let content = note.content;
 
   let isEditMode = false;
-
-  function deleteNote() {
-    console.log("Delete note");
-  }
 
   function updateNote(title: string, content: string | null) {
     note = { ...note, title, content };
@@ -43,7 +40,12 @@
       </div>
     </div>
   </Dialog.Trigger>
-  <Dialog.Content class="border-orange-700">
+  <Dialog.Content
+    class="border-orange-700"
+    on:close={() => {
+      isEditMode = false;
+    }}
+  >
     <Dialog.Header>
       <Dialog.Title class="text-2xl">
         <div class="flex gap-2 items-end">
@@ -84,6 +86,9 @@
             <Button
               class="hover:bg-red-800 h-fit px-2 py-2  my-0.5 w-fit group/delBtn"
               variant="ghost"
+              on:click={() => {
+                deleteNote();
+              }}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

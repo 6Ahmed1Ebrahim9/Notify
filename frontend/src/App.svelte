@@ -101,7 +101,12 @@
     </div>
     <ScrollArea class="h-[60vh] shadow-md flex flex-col gap-2">
       {#each notes as note (note.id)}
-        <NoteItem {note} />
+        <NoteItem
+          {note}
+          deleteNote={() => {
+            notes = notes.filter((n) => n.id !== note.id);
+          }}
+        />
       {/each}
     </ScrollArea>
     <Dialog.Root bind:open={dialogOpen}>
