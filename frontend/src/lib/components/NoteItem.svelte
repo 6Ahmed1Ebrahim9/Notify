@@ -4,22 +4,34 @@
   import { Button } from "./ui/button";
   import { Input } from "./ui/input";
   import { Textarea } from "./ui/textarea";
+  import { fade } from "svelte/transition";
+  import { updateNote } from "../api/endPoints/update-note";
   export let note: Note;
-  export let deleteNote: () => void;
+  export let deleteNote: (id: number) => Promise<void>;
 
-  let title = note.title;
-  let content = note.content;
+  let bindedTitle = note.title;
+  let bindedContent = note.content;
 
   let isEditMode = false;
 
-  function updateNote(title: string, content: string | null) {
-    note = { ...note, title, content };
+  async function update() {
+    await updateNote({
+      ...note,
+      title: bindedTitle,
+      content: bindedContent,
+    }).then((res) => {
+      if (res) {
+        note = res;
+      }
+    });
+    isEditMode = false;
   }
 </script>
 
 <Dialog.Root>
   <Dialog.Trigger class="w-full">
     <div
+      transition:fade
       class="flex flex-col gap-4 bg-stone-900 p-6 overflow-ellipsis rounded-lg hover:bg-orange-800 cursor-pointer group/taskItem transition-all ease-in-out"
     >
       <h2 class="text-3xl">
@@ -29,10 +41,10 @@
         class="flex gap-2 *:text-xl *:text-zinc-400 *:group-hover/taskItem:text-zinc-200 transition-all ease-in"
       >
         <span>
-          {note.createdAt.toLocaleDateString()}
+          {note.created?.split("T")[0]}
         </span>
         {#if note.content}
-          <span> - </span>
+          <span> | </span>
           <span>
             {note.content}
           </span>
@@ -87,7 +99,7 @@
               class="hover:bg-red-800 h-fit px-2 py-2  my-0.5 w-fit group/delBtn"
               variant="ghost"
               on:click={() => {
-                deleteNote();
+                deleteNote(note.id);
               }}
             >
               <svg
@@ -107,7 +119,7 @@
     </Dialog.Header>
 
     {#if isEditMode}
-      <form class="flex flex-col gap-4">
+      <form class="flex flex-col gap-4" on:submit|preventDefault={update}>
         <fieldset class="flex flex-col">
           <label for="noteTitle" class="sr-only"> Title </label>
           <Input
@@ -115,7 +127,8 @@
             name="noteTitle"
             class="p-4 rounded-xl bg-stone-100/5"
             placeholder="Title"
-            bind:value={title}
+            bind:value={bindedTitle}
+            required
           />
         </fieldset>
         <fieldset class="flex flex-col">
@@ -124,7 +137,7 @@
             name="noteContent"
             class="p-4 rounded-xl bg-stone-100/5"
             placeholder="Content"
-            bind:value={content}
+            bind:value={bindedContent}
           />
         </fieldset>
         <div class="*:w-full flex gap-2 items-center">
@@ -142,10 +155,6 @@
           <Button
             class="p-4 rounded-xl bg-orange-700 text-lg  shadow-sm shadow-zinc-800 border-2 border-zinc-800 hover:bg-orange-800"
             type="submit"
-            on:click={() => {
-              updateNote(title, content);
-              isEditMode = false;
-            }}
           >
             Save
           </Button>
@@ -156,7 +165,7 @@
         <span class="text-2xl">{note.content}</span>
       </div>
       <span class=" text-zinc-400">
-        {note.createdAt.toLocaleDateString()}
+        {note.created?.split("T")[0]}
       </span>
     {/if}
   </Dialog.Content>

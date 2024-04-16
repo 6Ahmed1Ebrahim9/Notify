@@ -6,62 +6,25 @@
   import * as Dialog from "$lib/components/ui/dialog";
   import { Input } from "$lib/components/ui/input";
   import { Textarea } from "$lib/components/ui/textarea";
+  import { onMount } from "svelte";
+  import { getNotes } from "$lib/api/endPoints/get-notes";
+  import { createNote } from "$lib/api/endPoints/create-note";
+  import { deleteNote } from "$lib/api/endPoints/del-note";
 
   let dialogOpen = false;
 
-  let notes: Note[] = [
-    {
-      id: "1",
-      title: "Hello, world!",
-      content: "Hello, world!",
-      createdAt: new Date(),
-    },
-    {
-      id: "2",
-      title: "Hello, world!",
-      content: "Hello, Svelte!",
-      createdAt: new Date(),
-    },
-    {
-      id: "3",
-      title: "Hello, world!",
-      content: "Hello, Tailwind CSS!",
-      createdAt: new Date(),
-    },
-    {
-      id: "4",
-      title: "Hello, world!",
-      content: "Hello, world!",
-      createdAt: new Date(),
-    },
-    {
-      id: "5",
-      title: "Hello, world!",
-      content: "Hello, Svelte!",
-      createdAt: new Date(),
-    },
-    {
-      id: "6",
-      title: "Hello, world!",
-      content: "Hello, Tailwind CSS!",
-      createdAt: new Date(),
-    },
-  ];
+  let notes: Note[] = [];
+
+  onMount(async () => (notes = await getNotes()));
 
   let title = "";
   let content = "";
 
-  function addNote() {
-    console.log(title, content);
-    notes = [
-      ...notes,
-      {
-        id: String(notes.length + 1),
-        title: title,
-        content: content,
-        createdAt: new Date(),
-      },
-    ];
+  async function addNote() {
+    const newNote = await createNote({ title, content });
+    if (newNote) {
+      notes = [...notes, newNote];
+    }
     clearBindings();
     dialogOpen = false;
   }
@@ -69,6 +32,14 @@
   function clearBindings() {
     title = "";
     content = "";
+  }
+
+  async function del(id: number) {
+    await deleteNote(id).then((res) => {
+      if (res) {
+        notes = notes.filter((note) => note.id !== id);
+      }
+    });
   }
 </script>
 
@@ -101,12 +72,7 @@
     </div>
     <ScrollArea class="h-[60vh] shadow-md flex flex-col gap-2">
       {#each notes as note (note.id)}
-        <NoteItem
-          {note}
-          deleteNote={() => {
-            notes = notes.filter((n) => n.id !== note.id);
-          }}
-        />
+        <NoteItem {note} deleteNote={del} />
       {/each}
     </ScrollArea>
     <Dialog.Root bind:open={dialogOpen}>
