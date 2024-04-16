@@ -7,6 +7,8 @@
   export let note: Note;
   export let deleteNote: () => void;
 
+  note.createdAt = new Date(note.createdAt.split(":")[0])?.toISOString();
+
   let title = note.title;
   let content = note.content;
 
@@ -29,7 +31,7 @@
         class="flex gap-2 *:text-xl *:text-zinc-400 *:group-hover/taskItem:text-zinc-200 transition-all ease-in"
       >
         <span>
-          {note.createdAt.toLocaleDateString()}
+          {note.createdAt}
         </span>
         {#if note.content}
           <span> - </span>
@@ -156,7 +158,7 @@
         <span class="text-2xl">{note.content}</span>
       </div>
       <span class=" text-zinc-400">
-        {note.createdAt.toLocaleDateString()}
+        {Date.parse(note.createdAt)}
       </span>
     {/if}
   </Dialog.Content>

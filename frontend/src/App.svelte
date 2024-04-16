@@ -6,47 +6,14 @@
   import * as Dialog from "$lib/components/ui/dialog";
   import { Input } from "$lib/components/ui/input";
   import { Textarea } from "$lib/components/ui/textarea";
+  import { onMount } from "svelte";
+  import { getNotes } from "$lib/api/endPoints/get-notes";
 
   let dialogOpen = false;
 
-  let notes: Note[] = [
-    {
-      id: "1",
-      title: "Hello, world!",
-      content: "Hello, world!",
-      createdAt: new Date(),
-    },
-    {
-      id: "2",
-      title: "Hello, world!",
-      content: "Hello, Svelte!",
-      createdAt: new Date(),
-    },
-    {
-      id: "3",
-      title: "Hello, world!",
-      content: "Hello, Tailwind CSS!",
-      createdAt: new Date(),
-    },
-    {
-      id: "4",
-      title: "Hello, world!",
-      content: "Hello, world!",
-      createdAt: new Date(),
-    },
-    {
-      id: "5",
-      title: "Hello, world!",
-      content: "Hello, Svelte!",
-      createdAt: new Date(),
-    },
-    {
-      id: "6",
-      title: "Hello, world!",
-      content: "Hello, Tailwind CSS!",
-      createdAt: new Date(),
-    },
-  ];
+  let notes: Note[] = [];
+
+  onMount(async () => (notes = await getNotes()));
 
   let title = "";
   let content = "";
@@ -59,7 +26,7 @@
         id: String(notes.length + 1),
         title: title,
         content: content,
-        createdAt: new Date(),
+        createdAt: new Date().getDate().toString(),
       },
     ];
     clearBindings();
@@ -100,14 +67,18 @@
       </span>
     </div>
     <ScrollArea class="h-[60vh] shadow-md flex flex-col gap-2">
-      {#each notes as note (note.id)}
-        <NoteItem
-          {note}
-          deleteNote={() => {
-            notes = notes.filter((n) => n.id !== note.id);
-          }}
-        />
-      {/each}
+      {#await getNotes() then notesData}
+        {#each notesData as note (note.id)}
+          <NoteItem
+            {note}
+            deleteNote={() => {
+              notes = notes.filter((n) => n.id !== note.id);
+            }}
+          />
+        {/each}
+      {:catch error}
+        <p class="text-red-500">{error.message}</p>
+      {/await}
     </ScrollArea>
     <Dialog.Root bind:open={dialogOpen}>
       <Dialog.Trigger class="absolute right-0 bottom-0">
