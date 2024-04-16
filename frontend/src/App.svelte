@@ -8,6 +8,8 @@
   import { Textarea } from "$lib/components/ui/textarea";
   import { onMount } from "svelte";
   import { getNotes } from "$lib/api/endPoints/get-notes";
+  import { createNote } from "$lib/api/endPoints/create-note";
+  import { deleteNote } from "$lib/api/endPoints/del-note";
 
   let dialogOpen = false;
 
@@ -18,17 +20,11 @@
   let title = "";
   let content = "";
 
-  function addNote() {
-    console.log(title, content);
-    notes = [
-      ...notes,
-      {
-        id: String(notes.length + 1),
-        title: title,
-        content: content,
-        createdAt: new Date().getDate().toString(),
-      },
-    ];
+  async function addNote() {
+    const newNote = await createNote({ title, content });
+    if (newNote) {
+      notes = [...notes, newNote];
+    }
     clearBindings();
     dialogOpen = false;
   }
@@ -36,6 +32,14 @@
   function clearBindings() {
     title = "";
     content = "";
+  }
+
+  async function del(id: number) {
+    await deleteNote(id).then((res) => {
+      if (res) {
+        notes = notes.filter((note) => note.id !== id);
+      }
+    });
   }
 </script>
 
@@ -67,18 +71,9 @@
       </span>
     </div>
     <ScrollArea class="h-[60vh] shadow-md flex flex-col gap-2">
-      {#await getNotes() then notesData}
-        {#each notesData as note (note.id)}
-          <NoteItem
-            {note}
-            deleteNote={() => {
-              notes = notes.filter((n) => n.id !== note.id);
-            }}
-          />
-        {/each}
-      {:catch error}
-        <p class="text-red-500">{error.message}</p>
-      {/await}
+      {#each notes as note (note.id)}
+        <NoteItem {note} deleteNote={del} />
+      {/each}
     </ScrollArea>
     <Dialog.Root bind:open={dialogOpen}>
       <Dialog.Trigger class="absolute right-0 bottom-0">
